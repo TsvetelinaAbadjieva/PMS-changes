@@ -802,7 +802,7 @@ function insertTaskChanges() {
     description: description,
     due_date: document.getElementById('newDueDate').value,
     status_id: document.getElementById('changeStatus').value,
-    user_id: document.getElementById('responsibleUserChange').value
+    user_id: document.getElementById('responsibleUserChange').value,
   };
 
   var alert = document.getElementById('alertUpdateTask');
@@ -811,7 +811,20 @@ function insertTaskChanges() {
       alertMessage(alert, data.message);
     }
   });
+
   loadTaskData(taskId);
+  var obj = reqObj;
+  obj['status'] = document.getElementById('btnTaskStatus').innerText;
+
+  updateTaskView(obj);
+};
+
+function updateTaskView(obj) {
+
+  document.querySelector('#taskTitle_' + obj.id).innerText = obj.task;
+  document.querySelector('#taskDescription_' + obj.id).innerText = obj.description;
+  document.querySelector('#btnStatus_' + obj.id).innerHTML = obj.status;
+  document.querySelector('#btnStatus_' + obj.id).style.backgroundColor = setTaskStatus(obj.status_id.toString());
 };
 
 function loadTaskDetails() {
@@ -863,26 +876,14 @@ function loadTaskDetails() {
   });
 
   if (_document.querySelector('#addChanges')) {
-    // _document.querySelector('#addChanges').id = 'addChanges_' + taskId;
-    // _document.querySelector('#addChanges_' + taskId).setAttribute('data_project_id', projectId);
-    // _document.querySelector('#addChanges_' + taskId).setAttribute('data_task_id', taskId);
 
-    //_document.querySelector('#addChanges').id = 'addChanges_' + taskId;
     _document.querySelector('#addChanges').setAttribute('data_project_id', projectId);
     _document.querySelector('#addChanges').setAttribute('data_task_id', taskId);
     _document.querySelector('#addChanges').setAttribute('data_section_id', sectionId);
   }
 
   if (_document.querySelector('#editTask')) {
-    // _document.querySelector('#editTask').id = 'editTask_' + taskId;
-    // _document.querySelector('#editTask_' + taskId).setAttribute('data_project_id', projectId);
-    // _document.querySelector('#editTask_' + taskId).addEventListener('click', function () {
-    //   var edit = document.getElementById('editTask_' + taskId);
-    //   var projectId = edit.getAttribute('data_project_id');
-    //   addResponsible(projectId);
-    // });
 
-    // _document.querySelector('#editTask').id = 'editTask_' + taskId;
     _document.querySelector('#editTask').setAttribute('data_project_id', projectId);
     _document.querySelector('#editTask').setAttribute('data_task_id', taskId);
     _document.querySelector('#editTask').setAttribute('data_section_id', sectionId);
@@ -890,6 +891,8 @@ function loadTaskDetails() {
     _document.querySelector('#editTask').addEventListener('click', function () {
       var edit = document.getElementById('editTask');
       var projectId = edit.getAttribute('data_project_id');
+      _document.getElementById('changeStatus').value = data.status_id;
+
       addResponsible(projectId);
     });
 
@@ -941,8 +944,6 @@ function loadTaskData(taskId) {
   var url = BASE_URL + '/task/details';
 
   var reqObj = {
-    //  sectionId: sectionId,
-    //  projectId: projectId,
     taskId: taskId
   };
 
@@ -958,6 +959,10 @@ function loadTaskData(taskId) {
       _document.getElementById('responsible').innerText = data.first_name + " " + data.last_name;
       _document.getElementById('btnTaskStatus').innerText = data.status;
       _document.getElementById('btnTaskStatus').style.backgroundColor = setTaskStatus(data.status_id.toString());
+      //_document.getElementById('changeStatus').style.backgroundColor = setTaskStatus(data.status_id.toString());
+      _document.getElementById('changeStatus').value = data.status_id;
+
+
     }
   });
 };
